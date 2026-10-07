@@ -239,9 +239,22 @@ export default function App() {
       </div>
 
       <footer className="mt-8 border-t border-line pt-6 text-sm leading-relaxed text-muted">
-        Comandos do app desktop conforme a{' '}
-        <a className="underline hover:text-accent" href="https://learn.chatgpt.com/docs/reference/slash-commands">documentação oficial</a>.
-        As convenções de prompt não são comandos oficiais: o ChatGPT entende pelo sentido da palavra. Os atalhos do chat web variam por plano e plataforma. Digite <kbd className="font-mono">/</kbd> no ChatGPT para ver os seus.
+        <p className="max-w-[80ch]">
+          Comandos do app desktop conforme a{' '}
+          <a className="underline hover:text-accent" href="https://learn.chatgpt.com/docs/reference/slash-commands">documentação oficial</a>.
+          As convenções de prompt não são comandos oficiais: o ChatGPT entende pelo sentido da palavra. Os atalhos do chat web variam por plano e plataforma. Digite <kbd className="font-mono">/</kbd> no ChatGPT para ver os seus.
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
+          <p>Desenvolvido por Israel Messias Júnior</p>
+          <a
+            href="https://wa.me/5549988198409?text=Comandos%20GPT"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center font-semibold text-accent underline underline-offset-4 hover:no-underline"
+          >
+            Vamos fazer um projeto?
+          </a>
+        </div>
       </footer>
     </div>
   )
