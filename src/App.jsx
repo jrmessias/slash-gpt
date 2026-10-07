@@ -59,6 +59,14 @@ function Command({ item }) {
     <li className="border-t border-line py-7 md:odd:pr-8 md:even:pl-8 md:even:border-l">
       <h3 className="font-mono text-2xl font-semibold tracking-tight text-accent">{item.c}</h3>
       <p className="mt-2 max-w-[56ch] text-base leading-relaxed">{item.d}</p>
+      {item.same && (
+        <p className="mt-2 text-sm text-muted">
+          Mesma função de{' '}
+          {item.same.map((c, i) => (
+            <span key={c}>{i > 0 && ' e '}<code className="font-mono font-medium text-ink">{c}</code></span>
+          ))}
+        </p>
+      )}
       <div className="mt-4 border-l-2 border-accent bg-sample py-3 pr-4 pl-4">
         <p className="text-sm text-muted">Exemplo</p>
         <code className="mt-1 block break-words font-mono text-sm font-medium">{item.ex}</code>
@@ -66,6 +74,36 @@ function Command({ item }) {
       </div>
       <CopyButton text={item.c} />
     </li>
+  )
+}
+
+function ThemeToggle() {
+  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark')
+
+  const toggle = () => {
+    const next = !dark
+    document.documentElement.dataset.theme = next ? 'dark' : 'light'
+    try { localStorage.setItem('theme', next ? 'dark' : 'light') } catch { /* modo privado: tema vale só nesta visita */ }
+    setDark(next)
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-pressed={dark}
+      aria-label="Modo escuro"
+      title={dark ? 'Mudar para o modo claro' : 'Mudar para o modo escuro'}
+      className="absolute top-4 right-4 inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-accent hover:text-accent sm:top-6 sm:right-8"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {dark ? (
+          <><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></>
+        ) : (
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        )}
+      </svg>
+    </button>
   )
 }
 
@@ -101,8 +139,9 @@ export default function App() {
   const shown = sections.reduce((n, s) => n + s.items.length, 0)
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-8">
-      <header className="pt-14 pb-10 sm:pt-20">
+    <div className="relative mx-auto max-w-6xl px-4 pb-24 sm:px-8">
+      <ThemeToggle />
+      <header className="pt-20 pb-10 sm:pt-24">
         <h1 className="max-w-[18ch] text-5xl leading-[0.95] font-extrabold tracking-tight sm:text-7xl">
           Comandos <span className="font-mono font-medium text-accent">/</span> do ChatGPT
         </h1>
@@ -154,7 +193,12 @@ export default function App() {
           <p className="sr-only" role="status">{shown} comandos encontrados</p>
           {sections.map((cat) => (
             <section key={cat.id} className="mb-14" aria-labelledby={`h-${cat.id}`}>
-              <h2 id={`h-${cat.id}`} className="text-3xl font-bold tracking-tight">{cat.name}</h2>
+              <h2 id={`h-${cat.id}`} className="text-3xl font-bold tracking-tight">
+                {cat.name}
+                <span className="ml-3 align-middle text-sm font-medium tracking-normal text-muted">
+                  {cat.official ? 'Comando do ChatGPT' : 'Convenção de prompt'}
+                </span>
+              </h2>
               <p className="mt-1 mb-5 max-w-[60ch] leading-relaxed text-muted">{cat.desc}</p>
               <ul className="grid md:grid-cols-2">
                 {cat.items.map((item) => <Command key={item.c} item={item} />)}
@@ -181,7 +225,7 @@ export default function App() {
       <footer className="mt-8 border-t border-line pt-6 text-sm leading-relaxed text-muted">
         Comandos do app desktop conforme a{' '}
         <a className="underline hover:text-accent" href="https://learn.chatgpt.com/docs/reference/slash-commands">documentação oficial</a>.
-        Os atalhos do chat web variam por plano e plataforma. Digite <kbd className="font-mono">/</kbd> no ChatGPT para ver os seus.
+        As convenções de prompt não são comandos oficiais: o ChatGPT entende pelo sentido da palavra. Os atalhos do chat web variam por plano e plataforma. Digite <kbd className="font-mono">/</kbd> no ChatGPT para ver os seus.
       </footer>
     </div>
   )
