@@ -77,6 +77,17 @@ function Command({ item }) {
   )
 }
 
+// agrupa itens consecutivos pelo campo `group`; sem `group` vira um bloco único
+function byGroup(items) {
+  const out = []
+  for (const item of items) {
+    const last = out[out.length - 1]
+    if (last && last[0] === item.group) last[1].push(item)
+    else out.push([item.group, [item]])
+  }
+  return out
+}
+
 function ThemeToggle() {
   const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark')
 
@@ -200,9 +211,14 @@ export default function App() {
                 </span>
               </h2>
               <p className="mt-1 mb-5 max-w-[60ch] leading-relaxed text-muted">{cat.desc}</p>
-              <ul className="grid md:grid-cols-2">
-                {cat.items.map((item) => <Command key={item.c} item={item} />)}
-              </ul>
+              {byGroup(cat.items).map(([group, items]) => (
+                <div key={group ?? 'all'} className={group ? 'mt-10 first:mt-0' : ''}>
+                  {group && <p className="mb-1 text-lg font-semibold text-muted">{group}</p>}
+                  <ul className="grid md:grid-cols-2">
+                    {items.map((item) => <Command key={item.c} item={item} />)}
+                  </ul>
+                </div>
+              ))}
             </section>
           ))}
 
